@@ -1,6 +1,6 @@
 {
 	"name": "christie-wd",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"legacy": ["christiewd"],
 	"api_version": "1.0.0",
 	"keywords": [
@@ -15,8 +15,5 @@
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"author": "Daniel Kaminski <daniel@dk-production.de>",
-	"license": "MIT",
-	"dependencies": {
-		"telnet-stream": "^1.0.4"
-	}
+	"license": "MIT"
 }
