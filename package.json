@@ -1,15 +1,15 @@
 {
 	"name": "christie-wd",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"legacy": ["christiewd"],
 	"api_version": "1.0.0",
 	"keywords": [
 		"Media Server"
 	],
-	"manufacturer": "Christie Digital System",
+	"manufacturer": "Christie Digital Systems",
 	"product": "Widget Designer",
 	"shortname": "WD",
-	"description": "Christie / Coolux Widget Designer",
+	"description": "Christie / Coolux Widget Designer TCP",
 	"main": "christiewd.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
