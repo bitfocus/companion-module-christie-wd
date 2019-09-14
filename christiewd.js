@@ -1,5 +1,6 @@
 var instance_skel = require('../../instance_skel');
-var TelnetSocket = require('../../telnet');
+var udp		  = require('../../udp');
+var TelnetSocket  = require('../../telnet');
 var debug;
 var log;
 
@@ -20,7 +21,24 @@ function instance(system, id, config) {
 instance.prototype.updateConfig = function(config) {
 	var self = this;
 	self.config = config;
-	self.init_tcp();
+	
+	if (self.udp !== undefined) {
+		self.udp.destroy();
+		delete self.udp;
+	}
+	if (self.socket !== undefined) {
+		self.socket.destroy();
+		delete self.socket;
+	}
+	
+	self.config = config;
+	if (self.config.prot == 'tcp') {
+		self.init_tcp();
+	};
+	if (self.config.prot == 'udp') {
+		self.init_udp();
+	};
+
 };
 
 instance.prototype.incomingData = function(data) {
@@ -35,7 +53,13 @@ instance.prototype.init = function() {
 	debug = self.debug;
 	log = self.log;
 
-	self.init_tcp();
+	if (self.config.prot == 'tcp') {
+		self.init_tcp();
+	};
+
+	if (self.config.prot == 'udp') {
+		self.init_udp();
+	};
 };
 
 instance.prototype.init_tcp = function() {
@@ -90,6 +114,36 @@ instance.prototype.init_tcp = function() {
 	}
 };
 
+instance.prototype.init_udp = function() {
+	var self = this;
+
+	if (self.udp !== undefined) {
+		self.udp.destroy();
+		delete self.udp;
+	}
+
+	self.status(self.STATE_WARNING, 'Connecting');
+
+	if (self.config.host !== undefined) {
+		self.udp = new udp(self.config.host, self.config.port);
+
+		self.udp.on('error', function (err) {
+			debug("Network error", err);
+			self.status(self.STATE_ERROR, err);
+			self.log('error',"Network error: " + err.message);
+		});
+
+		// If we get data, thing should be good
+		self.udp.on('data', function () {
+			self.status(self.STATE_OK);
+		});
+
+		self.udp.on('status_change', function (status, message) {
+			self.status(status, message);
+		});
+	}
+};
+
 // Return config fields for web config
 instance.prototype.config_fields = function () {
 	var self = this;
@@ -100,7 +154,7 @@ instance.prototype.config_fields = function () {
 			id:    'info',
 			width: 12,
 			label: 'Information',
-			value: 'Remember to activate Remoting under Connections -> Remoting -> TCP Server. Use Multi Client if you want to be able to send Commands from multiple Devices'
+			value: 'Remember to activate Remoting under Connections -> Remoting -> TCP or UDP Server. Use Multi Client if you want to be able to send Commands from multiple Devices'
 		},
 		{
 			type:    'textinput',
@@ -113,11 +167,21 @@ instance.prototype.config_fields = function () {
 		{
 			type:    'textinput',
 			id:      'port',
-			label:   'TCP Port',
+			label:   'Port',
 			width:   6,
 			default: '123',
 			regex:   self.REGEX_PORT
 		},
+		{
+			type: 'dropdown',
+			id: 'prot',
+			label: 'Connect with TCP / UDP',
+			default: 'tcp',
+			choices:  [
+				{ id: 'udp', label: 'UDP' },
+				{ id: 'tcp', label: 'TCP' }
+			]
+		}
 	]
 };
 
@@ -127,6 +191,9 @@ instance.prototype.destroy = function() {
 
 	if (self.socket !== undefined) {
 		self.socket.destroy();
+	}
+	if (self.udp !== undefined) {
+		self.udp.destroy();
 	}
 
 	debug("destroy", self.id);;
@@ -210,12 +277,22 @@ instance.prototype.action = function(action) {
 
 	if (cmd !== undefined) {
 
-		if (self.socket !== undefined && self.socket.connected) {
-			self.socket.write("{"+cmd+"}\r\n");
-		} else {
-			debug('Socket not connected :(');
-		}
-
+		if (self.config.prot == 'tcp') {
+			if (cmd !== undefined) {
+				if (self.socket !== undefined && self.socket.connected) {
+					self.socket.write('{'+cmd+'}\r\n');
+				} else {
+					debug('Socket not connected :(');
+				}
+			}
+		}	
+		if (self.config.prot == 'udp') {
+			if (cmd !== undefined ) {
+				if (self.udp !== undefined ) {
+					self.udp.send('{' + cmd + '}');
+				}
+			}
+		};
 	}
 };
 
