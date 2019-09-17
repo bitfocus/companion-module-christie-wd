@@ -21,7 +21,7 @@ function instance(system, id, config) {
 instance.prototype.updateConfig = function(config) {
 	var self = this;
 	self.config = config;
-	
+
 	if (self.udp !== undefined) {
 		self.udp.destroy();
 		delete self.udp;
@@ -30,14 +30,14 @@ instance.prototype.updateConfig = function(config) {
 		self.socket.destroy();
 		delete self.socket;
 	}
-	
+
 	self.config = config;
 	if (self.config.prot == 'tcp') {
 		self.init_tcp();
-	};
+	}
 	if (self.config.prot == 'udp') {
 		self.init_udp();
-	};
+	}
 
 };
 
@@ -55,11 +55,11 @@ instance.prototype.init = function() {
 
 	if (self.config.prot == 'tcp') {
 		self.init_tcp();
-	};
+	}
 
 	if (self.config.prot == 'udp') {
 		self.init_udp();
-	};
+	}
 };
 
 instance.prototype.init_tcp = function() {
@@ -196,7 +196,7 @@ instance.prototype.destroy = function() {
 		self.udp.destroy();
 	}
 
-	debug("destroy", self.id);;
+	debug("destroy", self.id);
 };
 
 instance.prototype.actions = function(system) {
@@ -207,10 +207,10 @@ instance.prototype.actions = function(system) {
 			label:'WD Command',
 			options: [
 				{
-					 type:    'textinput',
-					 label:   'Command',
-					 id:      'command',
-					 default: '',
+					type:    'textinput',
+					label:   'Command',
+					id:      'command',
+					default: '',
 				}
 			]
 		},
@@ -218,11 +218,11 @@ instance.prototype.actions = function(system) {
 			label:'CustomScript Click',
 			options: [
 				{
-					 type:    'textinput',
-					 label:   'CustomScript ID',
-					 id:      'csid',
-					 default: '',
-					 regex:   self.REGEX_NUMBER
+					type:    'textinput',
+					label:   'CustomScript ID',
+					id:      'csid',
+					default: '',
+					regex:   self.REGEX_NUMBER
 				}
 			]
 		},
@@ -230,23 +230,23 @@ instance.prototype.actions = function(system) {
 			label:'Fade to Value in Secounds',
 			options: [
 				{
-					 type:    'textinput',
-					 label:   'Fader ID',
-					 id:      'faderid',
-					 default: '',
-					 regex:   self.REGEX_NUMBER
+					type:    'textinput',
+					label:   'Fader ID',
+					id:      'faderid',
+					default: '',
+					regex:   self.REGEX_NUMBER
 				},
 				{
-					 type:    'textinput',
-					 label:   'Time (sec)',
-					 id:      'fadetime',
-					 default: '2.0',
+					type:    'textinput',
+					label:   'Time (sec)',
+					id:      'fadetime',
+					default: '2.0',
 				},
 				{
-					 type:    'textinput',
-					 label:   'Value',
-					 id:      'value',
-					 default: '1.0',
+					type:    'textinput',
+					label:   'Value',
+					id:      'value',
+					default: '1.0',
 				}
 			]
 		}
@@ -256,7 +256,6 @@ instance.prototype.actions = function(system) {
 
 instance.prototype.action = function(action) {
 	var self = this;
-	console.log("Sending some action", action);
 	var cmd;
 	var opt = action.options
 
@@ -273,7 +272,7 @@ instance.prototype.action = function(action) {
 			case 'fadetovalue':
 				cmd = 'WDFadeToValue('+ opt.faderid +','+ opt.fadetime +','+ opt.value +')';
 				break;
-	};
+	}
 
 	if (cmd !== undefined) {
 
@@ -285,14 +284,14 @@ instance.prototype.action = function(action) {
 					debug('Socket not connected :(');
 				}
 			}
-		}	
+		}
 		if (self.config.prot == 'udp') {
 			if (cmd !== undefined ) {
 				if (self.udp !== undefined ) {
 					self.udp.send('{' + cmd + '}');
 				}
 			}
-		};
+		}
 	}
 };
 
