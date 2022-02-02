@@ -1,7 +1,9 @@
 {
 	"name": "christie-wd",
-	"version": "1.0.6",
-	"legacy": ["christiewd"],
+	"version": "1.0.7",
+	"legacy": [
+		"christiewd"
+	],
 	"api_version": "1.0.0",
 	"keywords": [
 		"Media Server"
