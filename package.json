@@ -17,5 +17,13 @@
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"author": "Daniel Kaminski <daniel@dk-production.de>",
-	"license": "MIT"
+	"license": "MIT",
+	"homepage": "https://github.com/bitfocus/companion-module-christie-wd#readme",
+	"bugs": {
+		"url": "https://github.com/bitfocus/companion-module-christie-wd/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-christie-wd.git"
+	}
 }
